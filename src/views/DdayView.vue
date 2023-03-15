@@ -14,8 +14,10 @@
 
 <script>
 import cmn from "@/js/common";
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 import PopupComponent from "@/components/PopupComponent.vue";
+import {collection, doc, onSnapshot, query, deleteDoc} from "firebase/firestore";
+import {db} from "@/firebase";
 
 export default {
   name: "DdayView",
@@ -29,15 +31,30 @@ export default {
     }
   },
   methods:{
-    $deleteDDayItem(id){
+    ...mapMutations(['$updateDDayData']),
+    async $deleteDDayItem(id){
       console.log(id);
+      try{
+        await deleteDoc(doc(db, `userData/${this.currentUserData.email}/dDay`,id));
+      }catch(err){console.log(err)}
+
     }
   },
   mounted(){
     let today = cmn.$getToday();
     let dDayList = this.currentUserData.dDay;
     this.dDay = cmn.$getDDays(today,dDayList);
-    console.log(this.dDay);
+
+    const qDDay = query(collection(db, `userData/${this.currentUserData.email}/dDay`));
+    const unsub = onSnapshot(qDDay, (qSnapshot) => {
+      let list = [];
+      qSnapshot.forEach(doc => list = [...list, doc.data()]);
+
+      this.dDay = cmn.$getDDays(today,list);
+      this.dDay.sort((a,b) => new Date(a.date) - new Date(b.date))
+      this.$updateDDayData(list);
+    })
+
   }
 }
 </script>

@@ -1,24 +1,30 @@
 <template>
 <div id="calendarWrap" :key="currentUserData?.email || 'calender'">
   <div class="top">
-    <select v-model="yearOp">
+    <select v-model="yearOp" class="yearBox">
       <option :value="1979 + i" v-for="i of 50" :key="`year_${i}`">{{1979 + i}}</option>
     </select>
-    <select v-model="monthOp">
+    <span class="yearBox">. </span>
+    <select v-model="monthOp" class="monthBox">
       <option :value="i" v-for="i of 12" :key="`month_${i}`">{{i}}</option>
     </select>
+    <span class="monthBox">月</span>
   </div>
   <div class="calendar">
-    <span v-for="(day,index) in dayList" :key="index" class="tableHeader">{{day}}</span>
-    <calendar-date-component :propsDate="prev" :propsType="'notThis'"
-      v-for="(prev,index) in prevDates" :key="prev" @viewDay="$viewDay(prev)"
-    />
-    <calendar-date-component :propsDate="thisDate" :propsType="'this'"
-      v-for="(thisDate,index) in thisDates" :key="thisDate" @viewDay="$viewDay(thisDate)" :class="thisDate == $today() ? 'today' : ''"
-    />
-    <calendar-date-component :propsDate="next" :propsType="'notThis'"
-      v-for="(next,index) in nextDates" :key="next" @viewDay="$viewDay(next)"
-    />
+    <div class="calHead">
+      <span v-for="(day,index) in dayList" :key="index" class="tableHeader">{{day}}</span>
+    </div>
+    <div class="calBody">
+      <calendar-date-component :propsDate="prev" :propsType="'notThis'"
+                               v-for="(prev,index) in prevDates" :key="prev" @viewDay="$viewDay(prev)"
+      />
+      <calendar-date-component :propsDate="thisDate" :propsType="'this'"
+                               v-for="(thisDate,index) in thisDates" :key="thisDate" @viewDay="$viewDay(thisDate)" :class="thisDate == $today() ? 'today' : ''"
+      />
+      <calendar-date-component :propsDate="next" :propsType="'notThis'"
+                               v-for="(next,index) in nextDates" :key="next" @viewDay="$viewDay(next)"
+      />
+    </div>
   </div>
 </div>
 </template>
@@ -38,7 +44,8 @@ export default {
       prevDates: [],
       thisDates: [],
       nextDates: [],
-      dayList: ['일','월','화','수','목','금','토']
+      // dayList: ['일','월','화','수','목','금','토'],
+      dayList: ['日','月','火','水','木','金','土']
     }
   },
   computed:{
@@ -139,28 +146,87 @@ export default {
 </script>
 
 <style lang="scss">
-.calendar{
-  display: flex;
-  flex-wrap: wrap;
-  .tableHeader{
-    width: calc(100% / 7);
+#calendarWrap{
+  > .top{
     text-align: center;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #666;
+    padding-bottom: 0.5rem;
+    select {
+      -o-appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      /* IE */
+      &::-ms-expand {
+        display: none;
+      }
+      font-family: inherit;
+      border: 0;
+      font-size: 1rem;
+      text-align: center;
+      color: var(--color-text);
+      //font-weight: 700;
+      outline: 0;
+      font-size: 1.5rem;
+      padding: 0 0.2rem;
+    }
   }
-  .datebox{
-    width: calc(100% / 7);
-    padding: 0.5rem 0.2rem;
-    border-right: 1px solid lightskyblue;
-    border-bottom: 1px solid lightskyblue;
-    &.today .top span{
-      font-weight: 700;
+
+}
+.calendar{
+  .calHead{
+    display: flex;
+    flex-wrap: wrap;
+    .tableHeader{
+      width: calc(100% / 7);
+      text-align: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #666;
     }
-    &:nth-of-type(7n+1){
-      color: crimson;
-    }
-    &:nth-of-type(7n+7){
-      color: cornflowerblue;
+  }
+  .calBody{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.5rem 0;
+    .datebox{
+      width: calc(100% / 7);
+      padding: 0.5rem;
+      border-right: 1px solid var(--color-text);
+      border-bottom: 1px solid var(--color-text);
+      height: 60px;
+      .top span{
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+      }
+      &.today .top{
+        position: relative;
+        &::before{
+          content:"";
+          position: absolute;
+          width: 1.4rem;
+          height: 1.4rem;
+          left:-0.2rem;
+          top:-0.2rem;
+          border-radius: 50%;
+          background-color: var(--color-text);
+        }
+        span{
+          font-weight: 700;
+          position: relative;
+          z-index: 1;
+          color: var(--color-main);
+        }
+      }
+      &:nth-of-type(-n+7){
+        border-top: 1px solid var(--color-text);
+      }
+      &:nth-of-type(7n+1){
+        color: crimson;
+        border-left: 1px solid var(--color-text);
+      }
+      &:nth-of-type(7n+7){
+        color: cornflowerblue;
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
 <footer>
-  <button @click="$router.push({name: 'day',params:{dayId: '2023-02-28'}})">오늘의 일정</button>
+  <button @click="$router.push({name: 'day',params:{dayId: today}})">오늘의 일정</button>
   <button @click="$router.push({name: 'dDay'})">D-day</button>
   <button @click="$router.push({name: 'time',params:{dayId: today}})">타임테이블</button>
   <button @click="$router.push({name: 'todo'})">Todo-List</button>
@@ -27,9 +27,15 @@ footer{
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
   display: table;
   table-layout: fixed;
+  background: var(--color-text);
+  height: 50px;
   button{
     display: table-cell;
     width: 25%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--color-main);
   }
 }
 </style>

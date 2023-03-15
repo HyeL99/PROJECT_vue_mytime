@@ -45,25 +45,35 @@ export default {
 </script>
 
 <style lang="scss">
-.notThis{
+.datebox{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.notThis > div{
   opacity: 0.5;
 }
 .bottom{
   display: flex;
-  column-gap: 5px;
+  column-gap: 2px;
+  align-items: flex-end;
   span{
     font-size: 0;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
+    width: 0.8rem;
+    height:0.8rem;
     &.log{
-      background-color: crimson;
+      position: absolute;
+      right: 2px;
+      top:0;
+      height: 22px;
+      background: url('@/assets/img/icon_bookmark.svg') no-repeat top /contain;
     }
     &.time{
-      background-color: cornflowerblue;
+      background: url("@/assets/img/icon_clock.svg") no-repeat center / contain;
     }
     &.day{
-      background-color: mediumseagreen;
+      background: url("@/assets/img/icon_calendar.svg") no-repeat center / contain;
     }
   }
 }

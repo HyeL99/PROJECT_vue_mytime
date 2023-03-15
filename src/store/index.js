@@ -1,5 +1,5 @@
 import { createStore } from 'vuex'
-import {collection, doc, getDoc, getDocs, query} from "firebase/firestore";
+import {collection, doc, getDoc, getDocs, query, setDoc} from "firebase/firestore";
 import {db} from "@/firebase";
 
 export default createStore({
@@ -30,6 +30,12 @@ export default createStore({
     },
     $setCurrentUser(state,payload){
       state.currentUserData = payload;
+    },
+    $updateDDayData(state, payload){
+      state.currentUserData.dDay = payload;
+    },
+    $updateTodoData(state, payload){
+      state.currentUserData.todoList = payload;
     }
   },
   actions: {
@@ -45,32 +51,32 @@ export default createStore({
         let list = [];
         const qPlan = query(collection(db, `userData/${email}/plans`));
         const qPlanSnap = await getDocs(qPlan);
-        qPlanSnap.forEach(doc => list = [...list,doc.data()]);
-        userData.plans = list;
+        qPlanSnap?.forEach(doc => list = [...list,doc.data()]);
+        userData.plans = list.sort((a,b) => new Date(a.date) - new Date(b.date));
 
         list = [];
         const qDDay = query(collection(db, `userData/${email}/dDay`));
         const qDDaySnap = await getDocs(qDDay);
-        qDDaySnap.forEach(doc => list = [...list,doc.data()]);
-        userData.dDay = list;
+        qDDaySnap?.forEach(doc => list = [...list,doc.data()]);
+        userData.dDay = list.sort((a,b) => new Date(a.date) - new Date(b.date));
 
         list = [];
         const qRecords = query(collection(db, `userData/${email}/records`));
         const qRecordsSnap = await getDocs(qRecords);
-        qRecordsSnap.forEach(doc => list = [...list,doc.data()]);
-        userData.records = list;
+        qRecordsSnap?.forEach(doc => list = [...list,doc.data()]);
+        userData.records = list.sort((a,b) => new Date(a.date) - new Date(b.date));
 
         list = [];
         const qTimes = query(collection(db, `userData/${email}/times`));
         const qTimesSnap = await getDocs(qTimes);
-        qTimesSnap.forEach(doc => list = [...list,doc.data()]);
-        userData.times = list;
+        qTimesSnap?.forEach(doc => list = [...list,doc.data()]);
+        userData.times = list.sort((a,b) => new Date(a.startTime) - new Date(b.startTime));
 
         list = [];
         const qTodoList = query(collection(db, `userData/${email}/todoList`));
         const qTodoListSnap = await getDocs(qTodoList);
-        qTodoListSnap.forEach(doc => list = [...list,doc.data()]);
-        userData.todoList = list;
+        qTodoListSnap?.forEach(doc => list = [...list,doc.data()]);
+        userData.todoList = list.sort((a,b) => name > b.name ? 1 : -1);
       }).catch(err => console.log(err));
       commit('$setCurrentUser',userData);
     },
@@ -79,7 +85,7 @@ export default createStore({
       commit('$handleLoginMode',true);
       commit('$setLoginEmail',email);
       dispatch('$getUserData').then(()=>commit('$handleLoadingMode',false));
-    }
+    },
   },
   modules: {
   }

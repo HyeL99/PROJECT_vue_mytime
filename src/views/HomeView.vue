@@ -3,29 +3,38 @@
     <calendar-component />
     <hr>
     <section v-if="isLogin">
-      <h2>오늘 보기</h2>
-      <article>
-        <h3>일정</h3>
-        <ul>
-          <li v-for="(item) in plans" :key="item">{{item}}</li>
+      <article class="box">
+        <h2>일정</h2>
+        <ul class="bullet">
+          <template v-if="plans.length > 0">
+            <li v-for="(item) in plans" :key="item">{{item}}</li>
+          </template>
+          <li v-else>일정 無</li>
         </ul>
       </article>
-      <article>
+      <article class="box">
         <h2>Count D-day</h2>
-        <ul>
-          <li v-if="dDay.length > 0" v-for="item in dDay">
-            <span>{{ item.name }}</span>
-            <span>{{item.count}}</span>
-          </li>
+        <ul class="bullet">
+          <template v-if="dDay.length > 0">
+            <li v-for="item in dDay">
+              <span>{{ item.name }}</span>
+              <span>{{item.count}}</span>
+            </li>
+          </template>
+          <li v-else>디데이 일정이 없습니다.</li>
         </ul>
       </article>
-      <article>
+      <article class="box">
         <h2>오늘 기록</h2>
-        <ul>
-          <li v-if="times.length > 0" v-for="item in times">
-            <span>{{ item.topic }}</span>
-            <span>{{ item.time }}</span>
-          </li>
+        <ul class="bullet">
+          <template v-if="times.length > 0">
+            dd{{ plans}} {{times }}
+            <li v-for="item in times">
+              <span>{{ item.topic }}</span>
+              <span>{{ item.time }}</span>
+            </li>
+          </template>
+          <li v-else>아직 기록이 없습니다</li>
         </ul>
       </article>
     </section>
@@ -100,8 +109,8 @@ export default defineComponent({
   mounted(){
     const today = cmn.$getToday();
     if(this.currentUserData){
-      this.plans = this.currentUserData.plans.find(item => item.date === today).plan;
-      this.dDay = this.currentUserData.dDay;
+      this.plans = this.currentUserData.plans.find(item => item.date === today)?.plan || [];
+      this.dDay = this.currentUserData.dDay || [];
       // times 가져오기
       let timeList =  this.currentUserData.times.filter(item => item.date === today);
       this.times = this.$getTimes(timeList)

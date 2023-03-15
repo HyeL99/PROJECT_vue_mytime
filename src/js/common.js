@@ -28,4 +28,18 @@ const $getDDays = (day,array) => {
   return list;
 };
 
-export default {$getToday, $getDDays, $getDayString}
+const $secToTime = (val) => {
+  let sec = val;
+  let hh = Math.floor(sec / (60 * 60));
+  sec -= hh * 60 * 60;
+  let mm = Math.floor(sec / 60);
+  sec -= mm * 60;
+  sec = Math.floor(sec);
+
+  if(hh < 10) hh = '0' + hh;
+  if(mm < 10) mm = '0' + mm;
+  if(sec < 10) sec = '0' + sec;
+  return `${hh}:${mm}:${sec}`;
+}
+
+export default {$getToday, $getDDays, $getDayString, $secToTime}
