@@ -1,0 +1,46 @@
+<svg width="70" height="30" viewBox="0 0 70 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_492_578)">
+<path d="M1.5 3.5V1.5H3.5V3.5H4.5V4.5H65.5V3.5H66.5V1.5H68.5V3.5H69.5V26.5H68.5V28.5H66.5V26.5H65.5V25.5H4.5V26.5H3.5V28.5H1.5V26.5H0.5V3.5H1.5Z" fill="#14274E"/>
+<rect width="1" height="5" rx="0.5" transform="matrix(0 1 1 0 0 3.02254)" fill="white"/>
+<rect width="1" height="5" rx="0.5" transform="matrix(0 1 1 0 0 26.0225)" fill="white"/>
+<rect x="4" y="27.0225" width="24" height="1" rx="0.5" transform="rotate(-90 4 27.0225)" fill="white"/>
+<rect y="27.0225" width="24" height="1" rx="0.5" transform="rotate(-90 0 27.0225)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 0.977539 1.02255)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 0.977539 3.02255)" fill="white"/>
+<rect x="2.97754" y="4.02255" width="3" height="1" rx="0.5" transform="rotate(-90 2.97754 4.02255)" fill="white"/>
+<rect x="0.977539" y="4.02255" width="3" height="1" rx="0.5" transform="rotate(-90 0.977539 4.02255)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 1.02246 26.0225)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 1.02246 28.0225)" fill="white"/>
+<rect x="3.02246" y="29.0225" width="3" height="1" rx="0.5" transform="rotate(-90 3.02246 29.0225)" fill="white"/>
+<rect x="1.02246" y="29.0225" width="3" height="1" rx="0.5" transform="rotate(-90 1.02246 29.0225)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 65.9775 1)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 65.9775 3)" fill="white"/>
+<rect x="67.9775" y="4" width="3" height="1" rx="0.5" transform="rotate(-90 67.9775 4)" fill="white"/>
+<rect x="65.9775" y="4" width="3" height="1" rx="0.5" transform="rotate(-90 65.9775 4)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 66.0225 26)" fill="white"/>
+<rect width="1" height="3" rx="0.5" transform="matrix(0 1 1 0 66.0225 28)" fill="white"/>
+<rect x="68.0225" y="29" width="3" height="1" rx="0.5" transform="rotate(-90 68.0225 29)" fill="white"/>
+<rect x="66.0225" y="29" width="3" height="1" rx="0.5" transform="rotate(-90 66.0225 29)" fill="white"/>
+<rect width="1" height="5" rx="0.5" transform="matrix(0 1 1 0 65 2.99998)" fill="white"/>
+<rect width="1" height="5" rx="0.5" transform="matrix(0 1 1 0 65 26)" fill="white"/>
+<rect x="69" y="27" width="24" height="1" rx="0.5" transform="rotate(-90 69 27)" fill="white"/>
+<rect x="65" y="27" width="24" height="1" rx="0.5" transform="rotate(-90 65 27)" fill="white"/>
+<rect width="1" height="62" rx="0.5" transform="matrix(0 1 1 0 4 4)" fill="white"/>
+<rect width="1" height="62" rx="0.5" transform="matrix(0 1 1 0 4 25)" fill="white"/>
+<rect x="65" y="26" width="22" height="1" rx="0.5" transform="rotate(-90 65 26)" fill="white"/>
+<rect x="4" y="26" width="22" height="1" rx="0.5" transform="rotate(-90 4 26)" fill="white"/>
+<rect x="8" y="24" width="1" height="54" transform="rotate(-90 8 24)" fill="white"/>
+<rect x="8" y="7" width="1" height="54" transform="rotate(-90 8 7)" fill="white"/>
+<rect x="6" y="22" width="14" height="1" transform="rotate(-90 6 22)" fill="white"/>
+<rect x="63" y="22" width="14" height="1" transform="rotate(-90 63 22)" fill="white"/>
+<path d="M6 21C6.39397 21 6.78407 21.0776 7.14805 21.2284C7.51203 21.3791 7.84274 21.6001 8.12132 21.8787C8.3999 22.1573 8.62087 22.488 8.77164 22.8519C8.9224 23.2159 9 23.606 9 24L7.99986 24C7.99986 23.7374 7.94813 23.4773 7.84763 23.2347C7.74713 22.9921 7.59982 22.7716 7.41411 22.5859C7.22841 22.4002 7.00795 22.2529 6.76531 22.1524C6.52268 22.0519 6.26263 22.0001 6 22.0001V21Z" fill="white"/>
+<path d="M64 9C63.606 9 63.2159 8.9224 62.8519 8.77164C62.488 8.62087 62.1573 8.3999 61.8787 8.12132C61.6001 7.84274 61.3791 7.51203 61.2284 7.14805C61.0776 6.78407 61 6.39397 61 6L62.0001 6C62.0001 6.26263 62.0519 6.52268 62.1524 6.76531C62.2529 7.00795 62.4002 7.22841 62.5859 7.41411C62.7716 7.59982 62.9921 7.74713 63.2347 7.84763C63.4773 7.94813 63.7374 7.99986 64 7.99986V9Z" fill="white"/>
+<path d="M61 24C61 23.606 61.0776 23.2159 61.2284 22.8519C61.3791 22.488 61.6001 22.1573 61.8787 21.8787C62.1573 21.6001 62.488 21.3791 62.8519 21.2284C63.2159 21.0776 63.606 21 64 21L64 22.0001C63.7374 22.0001 63.4773 22.0519 63.2347 22.1524C62.9921 22.2529 62.7716 22.4002 62.5859 22.5859C62.4002 22.7716 62.2529 22.9921 62.1524 23.2347C62.0519 23.4773 62.0001 23.7374 62.0001 24H61Z" fill="white"/>
+<path d="M9 6C9 6.39397 8.9224 6.78407 8.77164 7.14805C8.62087 7.51203 8.3999 7.84274 8.12132 8.12132C7.84274 8.3999 7.51203 8.62087 7.14805 8.77164C6.78407 8.9224 6.39397 9 6 9L6 7.99986C6.26263 7.99986 6.52268 7.94813 6.76531 7.84763C7.00795 7.74713 7.22841 7.59982 7.41411 7.41411C7.59982 7.22841 7.74713 7.00795 7.84763 6.76531C7.94813 6.52268 7.99986 6.26263 7.99986 6H9Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_492_578">
+<rect width="70" height="30" fill="white"/>
+</clipPath>
+</defs>
+</svg>

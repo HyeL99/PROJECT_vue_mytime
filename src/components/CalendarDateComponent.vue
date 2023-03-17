@@ -1,7 +1,7 @@
 <template>
 <div :class="propsType == 'notThis' ? 'notThis datebox' : 'datebox'" @click="$viewDay">
-  <div class="top"><span>{{propsDate.slice(-2)}}</span></div>
-  <div class="bottom">
+  <div class="top"><span :class="isHoliday? 'holiday' : ''">{{propsDate.slice(-2)}}</span></div>
+  <div class="bottom" v-if="currentUserData">
     <span class="day" v-if="havePlans">일정 있음</span>
     <span class="time" v-if="haveTimes">시간기록 있음</span>
     <span class="log" v-if="haveRecord">하루기록 있음</span>
@@ -19,7 +19,7 @@ export default {
     propsType: String
   },
   computed: {
-    ...mapState(['currentUserData'])
+    ...mapState(['currentUserData','holidays','lunarDays'])
   },
   methods: {
     $viewDay(){
@@ -31,13 +31,29 @@ export default {
       havePlans: false,
       haveRecord: false,
       haveTimes: false,
+      isHoliday: false,
     }
   },
   mounted(){
+    let year = this.propsDate.slice(0, 4);
+    let month = this.propsDate.slice(5, 7);
+    let date =  this.propsDate.slice(8);
+
     let plans = this.currentUserData?.plans.filter(item => item.date === this.propsDate) || [];
     let record = this.currentUserData?.records.filter(item => item.date === this.propsDate) || [];
     let times = this.currentUserData?.times.filter(item => item.date === this.propsDate) || [];
-    this.havePlans = plans.length > 0;
+    let holiday = this.holidays.find(item => item.month === month && item.day === date);
+    let lunarDay = this.lunarDays.find(item => item.year.toString() === year)?.dayList.find(item => item.month === month && item.day === date);
+
+    let dDay = this.currentUserData.dDay.find(item => item.date === this.propsDate);
+    console.log(dDay)
+
+    if(!! holiday || !!lunarDay) {
+      this.isHoliday = true;
+    }
+
+    this.havePlans = plans.length > 0 || !! dDay;
+    if(!this.havePlans) this.havePlans = this.isHoliday;
     this.haveRecord = record.length > 0;
     this.haveTimes = times.length > 0;
   }
@@ -53,6 +69,11 @@ export default {
 }
 .notThis > div{
   opacity: 0.5;
+}
+.top{
+  span.holiday{
+    color: crimson;
+  }
 }
 .bottom{
   display: flex;

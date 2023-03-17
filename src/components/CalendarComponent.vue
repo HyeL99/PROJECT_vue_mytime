@@ -161,11 +161,10 @@ export default {
       }
       font-family: inherit;
       border: 0;
-      font-size: 1rem;
       text-align: center;
       color: var(--color-text);
-      //font-weight: 700;
       outline: 0;
+      //font-weight: 700;
       font-size: 1.5rem;
       padding: 0 0.2rem;
     }

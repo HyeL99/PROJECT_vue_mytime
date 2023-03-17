@@ -5,12 +5,11 @@
     <span>나의 시간</span>
     <img src="@/assets/img/icon_fan_l.svg">
   </h1>
-  <button @click="$router.push({name: 'login'})" v-if="!isLogin">
+  <button @click="$router.push({name: 'login'})" v-if="!isLogin" class="loginBtn">
     <img src='@/assets/img/icon_login.svg' alt="">
     <span>로그인</span>
   </button>
-  <button @click="$router.push({name: 'myAccount'})" v-else>
-    <img src='@/assets/img/icon_login.svg' alt="">
+  <button @click="$router.push({name: 'myAccount'})" v-else class="myBtn">
     <span>내 정보</span>
   </button>
 </header>
@@ -49,26 +48,39 @@ header{
   button{
     position: absolute;
     right: 0.5rem;
-    top: 100%;
+    top: 50%;
     transform: translateY(-50%);
     background-color: transparent;
     border: 0;
     color: var(--color-main);
     width: 97.2px;
     height: 36px;
-    margin-right: 10px;
+    z-index: 1;
     img{
       position: absolute;
       left: 0px;
       top: 0;
       height: 100%;
     }
-    span{
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      z-index: 2;
-      font-weight: 700;
+    &.myBtn{
+      background: url('@/assets/img/icon_symbol_mypage.svg') no-repeat center / contain;
+    }
+    &.loginBtn{
+      margin-right: 10px;
+      top: 100%;
+      img{
+        position: absolute;
+        left: 0px;
+        top: 0;
+        height: 100%;
+      }
+      span{
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        z-index: 2;
+        font-weight: 700;
+      }
     }
   }
 }

@@ -21,8 +21,11 @@ const $getDDays = (day,array) => {
     let date = item.date;
     let gap = new Date(day).getTime() - new Date(date).getTime();
     gap = gap / (1000*60*60*24);
-    gap = gap < 0 ? Math.ceil(gap) : '+'+Math.floor(gap);
-    item.count = 'D'+gap;
+    // gap = gap < 0 ? -1 * Math.ceil(gap) + '일 남음' : Math.floor(gap) + '일 지남';
+    // item.count = gap;
+    // if(item.count === '0일 지남') item.count = '오늘'
+    gap = gap < 0 ? Math.ceil(gap) : '+' + Math.floor(gap);
+    item.count = 'D' + gap;
     if(item.count === 'D+0') item.count = 'D-day'
   });
   return list;

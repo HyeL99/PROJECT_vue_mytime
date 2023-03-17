@@ -50,7 +50,14 @@ html, body, #app{
 ol,ul{
   list-style: none;
 }
+input{
+  outline: 0;
+  font-family: 'GowunDodum-Regular';
+}
 /*------------------ reset -------------*/
+*{
+  word-break: keep-all;
+}
 #app{
   display: flex;
   flex-direction: column;
@@ -59,18 +66,56 @@ ol,ul{
     padding: 1rem;
     overflow-y: scroll;
     background-color: var(--color-main);
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    //스크롤 삭제 설정
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera*/
+    }
   }
   .box{
+    position: relative;
     border: 1px solid var(--color-text);
     padding: 0.5rem;
+    color: var(--color-text);
     h2{
       font-size: 1.2rem;
       padding-bottom: 0.5rem;
     }
+    button.viewMore{
+      position: absolute;
+      right: 0rem;
+      top: 0rem;
+      padding: 0.5rem;
+      background: transparent;
+      border: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    button.addBtn{
+      position: absolute;
+      right: 0rem;
+      top: 0rem;
+      padding: 0.5rem;
+      background: transparent;
+      border: 0;
+      font-size: 0;
+    }
+  }
+  span.bar{
+    display: block;
+    margin: 1rem 0;
+    img{
+      width: 100%;
+    }
   }
   ul.bullet{
     li{
-      line-height: 1.2;
+      line-height: 1.5rem;
       padding-left: 1rem;
       position: relative;
       &::before{
@@ -78,9 +123,9 @@ ol,ul{
         position: absolute;
         left: 0;
         top: 0;
-        height: 100%;
+        height: 1.5rem;
         width: 10px;
-        background: url("@/assets/img/icon_bullet_symbol.svg") no-repeat center / contain;
+        background: url("@/assets/img/icon_bullet_symbol.svg") no-repeat center/ contain;
       }
     }
   }
