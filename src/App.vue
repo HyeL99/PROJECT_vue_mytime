@@ -52,6 +52,7 @@ ol,ul{
 }
 input{
   outline: 0;
+  color: inherit;
   font-family: 'GowunDodum-Regular';
 }
 /*------------------ reset -------------*/
@@ -61,6 +62,7 @@ input{
 #app{
   display: flex;
   flex-direction: column;
+  color: var(--color-text);
   main{
     flex-grow: 1;
     padding: 1rem;
@@ -81,7 +83,6 @@ input{
     position: relative;
     border: 1px solid var(--color-text);
     padding: 0.5rem;
-    color: var(--color-text);
     h2{
       font-size: 1.2rem;
       padding-bottom: 0.5rem;

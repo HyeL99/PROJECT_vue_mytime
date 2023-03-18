@@ -15,6 +15,29 @@ const $getDayString = (date) => {
   if (dd < 10) dd = '0' + dd;
   return `${yy}-${mm}-${dd}`
 }
+const $getDateAndTimeString = (date) => {
+  let dateString = $getDayString(date);
+  let hh = date.getHours();
+  let mm = date.getMinutes();
+  let ss = date.getSeconds();
+
+  if(hh < 10) hh = '0' + hh;
+  if(mm < 10) mm = '0' + mm;
+  if(ss < 10) ss = '0' + ss;
+
+  console.log(dateString,hh,mm,ss);
+  return `${dateString} ${hh}:${mm}:${ss}`;
+}
+const $getDay = (val) => {
+  let dayList = ['일','월','화','수','목','금','토'];
+  return dayList[new Date(val).getDay()];
+}
+const $getDateWithDay = (val) => {
+  if(!val) return '';
+  let dateArray = val.split('-');
+  let day = $getDay(val);
+  return `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}(${day})`
+}
 const $getDDays = (day,array) => {
   let list = array;
   list.forEach(item => {
@@ -45,4 +68,4 @@ const $secToTime = (val) => {
   return `${hh}:${mm}:${sec}`;
 }
 
-export default {$getToday, $getDDays, $getDayString, $secToTime}
+export default {$getToday, $getDDays, $getDayString, $secToTime, $getDateWithDay, $getDateAndTimeString}

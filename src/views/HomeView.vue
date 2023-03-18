@@ -1,7 +1,9 @@
 <template>
   <main class="homeView">
     <calendar-component />
-    <hr>
+    <span class="bar">
+      <img src="@/assets/img/symbol_line.svg" alt="">
+    </span>
     <section v-if="isLogin">
       <article class="box" @click="$router.push({name: 'day',params:{dayId: today}})">
         <h2>일정</h2>
@@ -29,9 +31,8 @@
       <article class="box" @click="$router.push({name: 'time',params:{dayId: today}})">
         <h2>오늘 기록</h2>
         <button class="viewMore">+</button>
-        <ul class="bullet">
+        <ul class="bullet times">
           <template v-if="times.length > 0">
-            dd{{ plans}} {{times }}
             <li v-for="item in times">
               <span>{{ item.topic }}</span>
               <span>{{ item.time }}</span>
@@ -166,6 +167,20 @@ export default defineComponent({
         }
         span:nth-of-type(2){
           width: 70px;
+          flex-shrink: 0;
+        }
+      }
+    }
+    ul.times{
+      li{
+        display: flex;
+        span{
+          line-height: 1.5rem;
+        }
+        span:first-of-type{
+          flex-grow: 1;
+        }
+        span:last-of-type{
           flex-shrink: 0;
         }
       }

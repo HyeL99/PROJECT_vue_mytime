@@ -75,10 +75,7 @@ export default {
   computed:{
     ...mapState(['currentUserData','holidays','lunarDays']),
     thisDateWithDay(){
-      if(!this.thisDate) return '';
-      let dateArray = this.thisDate.split('-');
-      let day = this.$getDay(this.thisDate);
-      return `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}(${day})`
+      return cmn.$getDateWithDay(this.thisDate)
     },
     prevDateWithDay(){
       return this.prevDate?.replaceAll('-','.');
@@ -102,10 +99,6 @@ export default {
   },
   methods:{
     ...mapMutations(['$updatePlanData']),
-    $getDay(val){
-      let dayList = ['일','월','화','수','목','금','토'];
-      return dayList[new Date(val).getDay()];
-    },
     $openSchedulePopup(){
       this.isPopupOpen = true;
       this.popupMode = 'schedule';
@@ -167,7 +160,7 @@ export default {
     // 시간 기록 받아오기
     let timeList = this.currentUserData.times.filter(el => el.date === this.thisDate);
     let timeArray = this.currentUserData.topics.map(item => {return {topic: item, time: []}});
-    timeList.map(item => timeArray.find(el => el.topic === item.topic).time.push(item))
+    timeList.map(item => timeArray.find(el => el.topic === item.topic)?.time.push(item))
     timeArray.map(item => {
       let total = 0;
       item.time.forEach(el => total += (new Date(el.endTime).getTime() - new Date(el.startTime).getTime()));
@@ -257,7 +250,17 @@ export default {
   }
   .timesItem{
     li{
-      margin: 0.5rem 0;
+      display: flex;
+      column-gap: 0.5rem;
+      span{
+        line-height: 1.5;
+      }
+      span:first-of-type{
+        flex-grow: 1;
+      }
+      span:last-of-type{
+        flex-shrink: 0;
+      }
     }
   }
 }

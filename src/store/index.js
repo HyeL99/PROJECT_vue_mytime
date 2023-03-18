@@ -914,6 +914,12 @@ export default createStore({
     $updatePlanData(state, payload){
       state.currentUserData.plans = payload;
     },
+    $updateTopicData(state, payload){
+      state.currentUserData.topics = payload;
+    },
+    $updateTimesData(state, payload){
+      state.currentUserData.times = payload;
+    },
   },
   actions: {
     async $getUserData({state,commit}){

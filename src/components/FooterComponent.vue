@@ -42,8 +42,9 @@ export default {
 footer{
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
   background: var(--color-text);
-  height: 50px;
+  height: 40px;
   text-align: center;
+  flex-shrink: 0;
   button{
     width: 25%;
     height: 100%;

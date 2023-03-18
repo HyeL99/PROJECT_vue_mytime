@@ -45,7 +45,7 @@ export default {
     let holiday = this.holidays.find(item => item.month === month && item.day === date);
     let lunarDay = this.lunarDays.find(item => item.year.toString() === year)?.dayList.find(item => item.month === month && item.day === date);
 
-    let dDay = this.currentUserData.dDay.find(item => item.date === this.propsDate);
+    let dDay = this.currentUserData?.dDay.find(item => item.date === this.propsDate);
     console.log(dDay)
 
     if(!! holiday || !!lunarDay) {
