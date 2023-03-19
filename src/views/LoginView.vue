@@ -1,6 +1,6 @@
 <template>
-<main>
-  <button @click="$login">구글로 로그인</button>
+<main class="loginView">
+  <button @click="$login" class="box">구글계정으로 시작하기</button>
 </main>
 </template>
 
@@ -37,7 +37,9 @@ export default {
             topics: [],
             username: 'a',
           }
-          await setDoc(doc(db, `userData`,user.email),data).then(res => console.log(res)).catch(err => console.log(err));
+          await setDoc(doc(db, `userData`,user.email),data).catch(err => console.log(err));
+
+          this.$doLogin(user.email).then(() => this.$router.push({name: 'home'}));
         }
       }).catch(err => console.log(err))
     },
@@ -50,3 +52,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.loginView{
+  button{
+    width: 100%;
+    margin-top: 1rem;
+    background: transparent;
+  }
+}
+</style>

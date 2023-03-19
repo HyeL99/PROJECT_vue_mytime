@@ -894,13 +894,13 @@ export default createStore({
     },
     $setLoginEmail(state,payload){
       state.loginEmail = payload;
-      sessionStorage.setItem('MT_E',payload)
+      localStorage.setItem('MT_E',payload)
     },
     $logout(state){
       state.isLogin = false;
       state.loginEmail = null;
       state.currentUserData = null;
-      sessionStorage.removeItem('MT_E')
+      localStorage.removeItem('MT_E')
     },
     $setCurrentUser(state,payload){
       state.currentUserData = payload;
@@ -919,6 +919,9 @@ export default createStore({
     },
     $updateTimesData(state, payload){
       state.currentUserData.times = payload;
+    },
+    $updateRecordData(state, payload){
+      state.currentUserData.records = payload;
     },
   },
   actions: {
@@ -960,8 +963,6 @@ export default createStore({
         const qTodoListSnap = await getDocs(qTodoList);
         qTodoListSnap?.forEach(doc => list = [...list,doc.data()]);
         userData.todoList = list.sort((a,b) => name > b.name ? 1 : -1);
-
-        console.log(userData);
       }).catch(err => console.log(err));
       commit('$setCurrentUser',userData);
     },

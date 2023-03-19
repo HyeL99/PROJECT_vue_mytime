@@ -46,7 +46,6 @@ export default {
     let lunarDay = this.lunarDays.find(item => item.year.toString() === year)?.dayList.find(item => item.month === month && item.day === date);
 
     let dDay = this.currentUserData?.dDay.find(item => item.date === this.propsDate);
-    console.log(dDay)
 
     if(!! holiday || !!lunarDay) {
       this.isHoliday = true;
@@ -54,6 +53,17 @@ export default {
 
     this.havePlans = plans.length > 0 || !! dDay;
     if(!this.havePlans) this.havePlans = this.isHoliday;
+    if(!this.havePlans){
+      let list = this.currentUserData?.plans.filter(item => item.date.slice(-5) === this.propsDate.slice(-5)) || [];
+      for(let item of list){
+        for(let el of item.plan){
+          if (el.isEveryYear) {
+            this.havePlans = true;
+            break;
+          }
+        }
+      }
+    }
     this.haveRecord = record.length > 0;
     this.haveTimes = times.length > 0;
   }

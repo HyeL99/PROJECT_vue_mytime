@@ -16,10 +16,9 @@ const qUserData =  query(collection(db,"userData"));
 let list = [];
 getDocs(qUserData).then(qSnapshot => {
   qSnapshot.forEach(doc => list = [...list, doc.data()]);
-  console.log(list)
 })
 
-let email = sessionStorage.getItem('MT_E');
+let email = localStorage.getItem('MT_E');
 if(!!email){
   store.dispatch('$doLogin',email);
 }

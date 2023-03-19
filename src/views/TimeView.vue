@@ -103,12 +103,16 @@ export default {
   methods:{
     ...mapMutations(['$updateTopicData','$updateTimesData']),
     $startTimer(){
+      console.log(this.thisTopic)
+      if(!this.thisTopic) return alert('기록 주제를 선택해주세요.');
       this.isTimerOn = true;
     },
     $stopTimer(){
       this.isTimerOn = false;
     },
     async $addTimeItem(){
+      console.log(this.thisTopic)
+      if(!this.thisTopic) return alert('기록 주제를 선택해주세요.');
       const timesId = `times@${uuid().replaceAll('-','')}`
       const data = {
         id: timesId,
@@ -173,7 +177,7 @@ export default {
     this.topics = this.currentUserData?.topics.sort() || [];
     this.thisTopic = this.topics[0];
 
-    let times = this.currentUserData.times.filter(item => item.date === this.thisDate);
+    let times = this.currentUserData?.times.filter(item => item.date === this.thisDate) || [];
     this.$setTimeList(times);
 
     //토픽 데이터 변경시 데이터 갱신
@@ -181,7 +185,7 @@ export default {
     const unsub1 = onSnapshot(qTopic, (qSnapshot) => {
       let list = [];
       qSnapshot.forEach(doc => list = [...list, doc.data()]);
-      let topics = list.find(item => item.email === this.currentUserData.email).topics.sort();
+      let topics = list.find(item => item.email === this.currentUserData.email)?.topics.sort();
       this.$updateTopicData(topics);
       this.topics = topics || [];
 

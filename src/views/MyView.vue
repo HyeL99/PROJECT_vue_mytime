@@ -1,8 +1,11 @@
 <template>
-<main>
-  <button @click="$doLogout">로그아웃</button>
-
-  <section>
+<main class="myView">
+  <p><span v-if="currentUserData">{{currentUserData.email}}</span>님, 환영합니다.</p>
+  <img src="@/assets/img/symbol_line.svg" alt="-------------------">
+  <button @click="$doLogout" class="logoutBtn">로그아웃</button>
+  <img src="@/assets/img/symbol_line.svg" alt="-------------------">
+  <section class="box" v-if="currentUserData && currentUserData.times.length > 0">
+    <h2>통계</h2>
     <div class="chartWrap" style="width: 100%; height: 400px; margin: 0 auto;">
       <canvas id="barChart"></canvas>
     </div>
@@ -66,6 +69,7 @@ export default {
         data: [...dataList],
         type: 'line'
       });
+
       this.timeList.map(dayObj => {
         if(dayObj.time.length>0){
           let dayIndex = this.barChartProps.labels.indexOf(dayObj.date);
@@ -74,11 +78,12 @@ export default {
             let sec = (new Date(timeObj.endTime).getTime() - new Date(timeObj.startTime).getTime()) / 1000;
             datasets[index].data[dayIndex] += sec;
             datasets[this.barChartProps.topics.length].data[dayIndex] += sec;
+
           })
         }
       });
       datasets.forEach(item => {
-        item.data = item.data.map(el => Math.round(el / 60))
+        item.data = item.data.map(el => Math.ceil(el / 60))
       })
 
       this.barChartProps.labels = this.barChartProps.labels.map(item => item.slice(-5).replace('-','월 ') + '일')
@@ -108,7 +113,7 @@ export default {
         timeArray.data[index] += sec;
       })
       timeArray.data = timeArray.data.map(item => Math.round(item / 60));
-      console.log(timeArray,list);
+      // console.log(timeArray,list);
       const pieChart = new Chart(el, {
         type: 'pie',
         data:{
@@ -137,14 +142,35 @@ export default {
       item.time = this.currentUserData.times.filter(el => el.date === item.date);
     });
     this.timeList = list;
-
-    console.log(this.timeList);
-    this.$getBarData();
-    this.$getPieData();
+    if(this.currentUserData.times.length > 0){
+      this.$getBarData();
+      this.$getPieData();
+    }
   }
 }
 </script>
 
-<style>
-
+<style lang="scss">
+.myView{
+  p{
+    padding-bottom: 1rem;
+    span{
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+  }
+  img{
+    display: block;
+    width: 100%;
+  }
+  button{
+    width: 100%;
+    padding: 0.3rem 0;
+    border: 0;
+    background: transparent;
+  }
+  section{
+    margin-top: 1rem;
+  }
+}
 </style>

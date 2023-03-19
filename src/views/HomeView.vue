@@ -103,7 +103,7 @@ export default defineComponent({
     },
   },
   mounted(){
-    // this.today = '2023-01-23'
+    // this.today = '2022-03-19'
     this.today = cmn.$getToday();
     if(this.currentUserData){
       let year = this.today.slice(0, 4);
@@ -115,9 +115,16 @@ export default defineComponent({
       let dDayToday = this.currentUserData.dDay.filter(item => item.date === this.today);
 
       let plans = this.currentUserData.plans.find(item => item.date === this.today)?.plan || [];
+      plans = plans.map(item => item.name);
       if(!! holiday) plans.push(holiday.name);
       if(!! lunarDay) plans.push(lunarDay.name);
-      dDayToday.forEach(item => plans.push(item.name))
+      dDayToday.forEach(item => plans.push(item.name));
+
+      let everyPlan = this.currentUserData.plans.filter(item => item.date !== this.today && item.date.slice(-5) === this.today.slice(-5));
+      everyPlan.forEach(item => item.plan.forEach(el => {
+        if (el.isEveryYear) plans.push(el.name)
+      }));
+
       this.plans = plans.sort();
 
       this.dDay = this.currentUserData.dDay || [];

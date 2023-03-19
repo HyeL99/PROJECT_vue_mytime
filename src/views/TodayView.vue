@@ -12,12 +12,12 @@
     </button>
     <ul class="bullet schedule">
       <li v-for="(item, index) in thisHolidays" :key="index">
-        <span class="holiday">{{item.name}}</span>
+        <span class="holiday">{{item}}</span>
       </li>
       <template v-if="plans && plans.length > 0">
         <li v-for="(item, index) in plans" :key="index">
-          <span>{{item.name}}</span>
-          <button v-if="!item.isDDay" @click="$deleteScheduleItem(item.name)">삭제</button>
+          <span>{{item.el.name}}</span>
+          <button v-if="!item.isDDay" @click="$deleteScheduleItem(item.el.date,item.el.name)">삭제</button>
           <button v-if="item.isDDay" @click="$router.push({name: 'dDay'})">D-day</button>
         </li>
       </template>
@@ -42,10 +42,13 @@
   <span class="bar">
     <img src="@/assets/img/symbol_line.svg" alt="--------------------------  ">
   </span>
-  <section class="box">
+  <section class="box record">
     <h2>오늘의 기록</h2>
     <button class="addBtn" @click="$openRecordPopup">
       <img src="@/assets/img/icon_paint.svg" alt="오늘의 기록 추가">
+    </button>
+    <button class="deleteBtn" @click="$deleteRecord">
+      <img src="@/assets/img/icon_plus.svg" alt="오늘의 기록 삭제">
     </button>
     <div class="wrap" v-if="!!record">
       <template v-if="!!record.img">
@@ -98,7 +101,7 @@ export default {
     }
   },
   methods:{
-    ...mapMutations(['$updatePlanData']),
+    ...mapMutations(['$updatePlanData','$updateRecordData']),
     $openSchedulePopup(){
       this.isPopupOpen = true;
       this.popupMode = 'schedule';
@@ -110,22 +113,32 @@ export default {
     $closePopup(){
       this.isPopupOpen = false;
     },
-    async $deleteScheduleItem(name){
-      let planData = this.currentUserData.plans.find(item => item.date === this.thisDate)
-      console.log(name, planData);
+    async $deleteScheduleItem(date,name){
+      let isDeleteItem = confirm('삭제된 일정은 복구하실 수 없습니다. 삭제하시겠습니까?');
+      if(!isDeleteItem) return;
+
+      let planData = this.currentUserData.plans.find(item => item.date === date)
+      console.log(name, date,planData);
 
       if(planData.plan.length === 1){
         try{
-          await deleteDoc(doc(db,`userData/${this.currentUserData.email}/plans`,this.thisDate))
+          await deleteDoc(doc(db,`userData/${this.currentUserData.email}/plans`,date))
         }catch(err){console.log(err)}
       } else {
-        let dataList = planData.plan.filter(item => item !== name);
-        planData.plan = dataList;
+        planData.plan = planData.plan.filter(item => item.name !== name);
         try{
-          await setDoc(doc(db,`userData/${this.currentUserData.email}/plans`,this.thisDate),planData)
+          await setDoc(doc(db,`userData/${this.currentUserData.email}/plans`,date),planData)
         }catch(err){console.log(err)}
       }
 
+    },
+    async $deleteRecord(){
+      const isDeleteRecord = confirm('삭제한 기록은 복구하실 수 없습니다; 삭제하시겠습니까?');
+      if(!isDeleteRecord) return;
+
+      try{
+        await deleteDoc(doc(db,`userData/${this.currentUserData.email}/records`,this.thisDate))
+      }catch(err){console.log(err)}
     }
   },
   mounted(){
@@ -147,14 +160,15 @@ export default {
     let holiday = this.holidays.find(item => item.month === month && item.day === date);
     let lunarDays = this.lunarDays.find(item => item.year.toString() === year)?.dayList.filter(item => item.month === month && item.day === date);
     let thisHolidays = !!holiday ? [holiday] : [];
-    lunarDays.forEach(item => thisHolidays.push(item))
+    lunarDays?.forEach(item => thisHolidays.push(item))
     this.thisHolidays = thisHolidays.length > 0 ? thisHolidays : null;
 
     planList?.sort();
     dDayList?.sort((a,b) => a.name - b.name);
 
-    planList?.forEach(item => plans.push({name: item, isDDay: false}));
-    dDayList?.forEach(item => plans.push({name: item.name, isDDay: true}));
+    planList?.forEach(item => plans.push({el: item, isDDay: false}));
+    dDayList?.forEach(item => plans.push({el: item, isDDay: true}));
+
     this.plans = plans.length > 0 ? plans : null;
 
     // 시간 기록 받아오기
@@ -174,19 +188,32 @@ export default {
 
     //일정 데이터 변경시 데이터 갱신
     const qSchedule = query(collection(db, `userData/${this.currentUserData.email}/plans`));
-    const unsub = onSnapshot(qSchedule, (qSnapshot) => {
+    const unsub1 = onSnapshot(qSchedule, (qSnapshot) => {
       let list = [];
       qSnapshot.forEach(doc => list = [...list, doc.data()]);
       this.$updatePlanData(list);
       let plans = [];
-      planList = list.find(item => item.date === this.thisDate)?.plan;
+      planList = list.find(item => item.date === this.thisDate)?.plan || [];
+      let everyList = list.filter(item => item.date !== this.thisDate && item.date.slice(-5) === this.thisDate.slice(-5));
+      everyList.forEach(item => item.plan.forEach(el => {
+        if(el.isEveryYear) planList.push(el);
+      }))
 
       planList?.sort();
       dDayList?.sort((a,b) => a.name - b.name);
 
-      planList?.forEach(item => plans.push({name: item, isDDay: false}));
-      dDayList?.forEach(item => plans.push({name: item.name, isDDay: true}));
+      planList?.forEach(item => plans.push({el: item, isDDay: false}));
+      dDayList?.forEach(item => plans.push({el: item, isDDay: true}));
       this.plans = plans.length > 0 ? plans : null;
+    });
+
+    //오늘기록 데이터 변경시 데이터 갱신
+    const qRecord = query(collection(db, `userData/${this.currentUserData.email}/records`));
+    const unsub2 = onSnapshot(qRecord, (qSnapshot) => {
+      let list = [];
+      qSnapshot.forEach(doc => list = [...list, doc.data()]);
+      this.$updateRecordData(list);
+      this.record = list.find(item => item.date === this.thisDate);
     });
   }
 }
@@ -217,10 +244,35 @@ export default {
   section {
     margin: 0.5rem 0;
   }
-
-  .box .wrap img {
-    width: 100%;
+  .record{
+    button.addBtn{
+      right: 2rem !important;
+    }
+    button.deleteBtn{
+      position: absolute;
+      right: 0.5rem;
+      top: 0.5rem;
+      background: transparent;
+      border: 0;
+      font-size: 0;
+      width: 20px;
+      height: 20px;
+      img{
+        width: 85%;
+        height: 85%;
+        transform: rotate(45deg);
+      }
+    }
+    .wrap {
+      p{
+        padding-top: 1rem;
+      }
+      img {
+        width: 100%;
+      }
+    }
   }
+
 
   .schedule {
     li {

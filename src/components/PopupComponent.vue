@@ -2,28 +2,37 @@
 <div id="popup">
   <div class="contentsWrap box">
     <div class="contents">
-      <h2>{{title}}</h2>
+      <h2>{{title}} <span v-if="mode === 'record'" class="recordDate">{{$route.params.dayId.replaceAll('-','.')}}</span></h2>
       <section v-if="mode === 'dDay'">
         <input type="text" placeholder="제목 입력" v-model="dDayProps.title" class="title">
         <VueDatePicker v-model="dDayDate" class="datepicker" placeholder="d-day  날짜 선택"/>
       </section>
-      <section v-if="mode === 'schedule'">
+      <section v-if="mode === 'schedule'" class="schedulePopup">
         <input type="text" placeholder="제목 입력" v-model="scheduleProps.title" class="title">
-        <VueDatePicker v-model="scheduleDate" class="datepicker" placeholder="d-day  날짜 선택" />
+        <VueDatePicker v-model="scheduleDate" class="datepicker" placeholder="일정 날짜 선택" />
+        <div class="checkboxPlace">
+          <label>
+            <img src="@/assets/img/icon_check_on.svg" alt="일정 매년 반복 체크박스" v-if="scheduleProps.isEveryYear">
+            <img src="@/assets/img/icon_check_off.svg" alt="일정 매년 반복 체크박스" v-else>
+            <input type="checkbox" name="isEveryYear" id="isEveryYear" v-model="scheduleProps.isEveryYear">
+            <span>일정 매년 반복</span>
+          </label>
+
+        </div>
       </section>
       <section v-if="mode === 'record'" class="recordPopup">
-        <form action="">
-          <div id="fileBox">
-            <input class="uploadName" placeholder="이미지 선택(최대 1개)" disabled="disabled">
-            <label for="diaryFile">첨부</label>
-            <input type="file" id="diaryFile" accept="image/*" autocomplete="off">
-          </div>
-          <div id="imgViewer">
-            <img id="preview" alt="No Image">
-          </div>
-          <hr>
-          <textarea id="diaryContent" placeholder="내용 입력" autocomplete="off"></textarea>
-        </form>
+        <div id="fileBox">
+          <input class="uploadName" placeholder="이미지 선택(최대 1개)" disabled="disabled" v-model="recordProps.name">
+          <label for="diaryFile">첨부</label>
+          <input type="file" id="diaryFile" accept="image/*" autocomplete="off" @change="$onFileChange">
+          <button @click="$clearImage">삭제</button>
+        </div>
+        <div id="imgViewer" :key="recordProps.file">
+          <img :src="recordProps.fileUrl" :alt="`${$route.params.dayId.replaceAll('-','.')} 일기 이미지`" v-if="recordProps.fileUrl">
+          <p v-else>이미지를 등록해주세요.</p>
+        </div>
+        <hr>
+        <textarea id="diaryContent" placeholder="내용 입력" autocomplete="off" v-model="recordProps.story"></textarea>
       </section>
       <section v-if="mode === 'topics'" class="editTopic">
         <form @submit="$addTopic">
@@ -72,7 +81,8 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import cmn from "@/js/common";
 import {mapActions, mapState} from "vuex";
 import {doc, setDoc} from "firebase/firestore";
-import {db} from "@/firebase";
+import {ref, uploadBytes, getDownloadURL} from 'firebase/storage';
+import {db, storage} from "@/firebase";
 export default {
   name: "PopupComponent",
   components: {VueDatePicker},
@@ -92,6 +102,7 @@ export default {
       scheduleProps:{
         title: null,
         date: null,
+        isEveryYear: false,
       },
       inputTopic: null,
       timesProps:{
@@ -101,6 +112,12 @@ export default {
       },
       selectedStartTime: null,
       selectedEndTime: null,
+      recordProps:{
+        fileUrl: null,
+        name: null,
+        story: null,
+      },
+      imgData: null,
     }
   },
   computed:{
@@ -161,9 +178,9 @@ export default {
         let scheduleId = this.scheduleProps.date;
         let plans = this.currentUserData.plans.find(item => item.date === scheduleId)?.plan || [];
 
-        if(plans.includes(this.scheduleProps.title)) return alert('이미 등록된 일정입니다.')
+        if(plans.find(item => item.name === this.scheduleProps.title)) return alert('이미 등록된 일정입니다.')
 
-        plans.push(this.scheduleProps.title)
+        plans.push({name:this.scheduleProps.title, isEveryYear: this.scheduleProps.isEveryYear, date: this.scheduleProps.date});
         let data = {
           date: this.scheduleProps.date,
           plan: plans
@@ -178,8 +195,30 @@ export default {
         this.$emit('closePopup');
       }
     },
-    $addRecordItem(){
-      console.log('add record');
+    async $addRecordItem(){
+      const todayId = this.$route.params.dayId
+      if(this.recordProps.story === null || this.recordProps.story === '') return alert('입력된 내용이 없습니다');
+
+      if(this.imgData){
+        const storageRef = ref(storage, `images/${todayId}`);
+        const uploadImage = await uploadBytes(storageRef, this.imgData);
+
+        const fileUrl = await getDownloadURL(uploadImage.ref);
+
+        this.recordProps.fileUrl = fileUrl;
+      }
+
+      console.log(this.recordProps);
+      let data = {
+        date: todayId,
+        img: this.recordProps.fileUrl,
+        story: this.recordProps.story
+      }
+      try{
+        await setDoc(doc(db,`userData/${this.currentUserData.email}/records`,todayId),data)
+      }catch(err){console.log(err)}
+
+      this.$emit('closePopup');
     },
     async $addTimesItem(){
       let props = this.timesProps
@@ -245,6 +284,26 @@ export default {
         console.log(err)
       }
     },
+    $onFileChange(e){
+      let file = e.target.files[0];
+
+      if(!file) return;
+
+      if (file.type === undefined || file.type.indexOf('image') < 0) return alert('이미지 파일만 업로드 가능합니다.');
+      if (file.size > 1024 * 1024 * 2) return alert('이미지 용량은 2MB 이하만 가능합니다.');
+
+      this.recordProps.name = file?.name || null;
+
+      if(!! file) {
+        this.imgData = file;
+        this.recordProps.fileUrl = URL.createObjectURL(file);
+      }
+    },
+    $clearImage(){
+      this.recordProps.fileUrl = null;
+      this.recordProps.name = null;
+      this.imgData = null;
+    },
     $cancel(){
       this.$clearForm();
       this.$emit('closePopup');
@@ -255,7 +314,6 @@ export default {
     }
   },
   mounted(){
-    console.log(this.mode);
     switch (this.mode){
       case 'dDay':
         this.title = 'D-day 추가'; break;
@@ -269,19 +327,42 @@ export default {
         this.title = '기록 주제 설정'; break;
       default: break;
     }
+
+    if(this.mode === 'record'){
+      const recordData = this.currentUserData?.records.find(item => item.date === this.$route.params.dayId);
+      console.log(recordData);
+      if(recordData){
+        this.recordProps.story = recordData.story;
+        if(recordData.img) this.recordProps.fileUrl = recordData.img;
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss">
 #popup{
-  position: absolute;
+  position: fixed;
   left:0;
-  top: 0;
+  top: 50px;
+  bottom: 40px;
   width: 100%;
-  height: 100%;
   background: rgba(0,0,0,0.5);
   padding: 1rem;
+  overflow-y: scroll;
+  //스크롤 삭제 설정
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+
+  .recordDate{
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    font-size: 0.8rem;
+  }
   .contentsWrap{
     background-color: var(--color-main);
     min-height: 300px;
@@ -293,8 +374,7 @@ export default {
     input.title{
       font-size: 1.2rem;
       border: 0;
-      padding: 0.5rem 0;
-      padding-left: 12px;
+      padding: 0.5rem 0 0.5rem 12px;
       width: 100%;
       border-bottom: 1px solid var(--color-text);
       font-weight: 700;
@@ -313,61 +393,67 @@ export default {
     }
 
     .recordPopup{
-      form{
-        flex: 1;
-        height: 100%;
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      column-gap: 0.5rem;
+      #fileBox{
         display: flex;
-        flex-direction: column;
-        column-gap: 0.5rem;
-        #fileBox{
-          display: flex;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        .uploadName:disabled {
+          flex: 1;
+          background-color: transparent;
           border: 1px solid var(--color-text);
-          font-size: 0.9rem;
-          margin-bottom: 0.5rem;
-          .uploadName:disabled {
-            flex: 1;
-            background-color: transparent;
-            border: 0;
-            padding-left: 0.5rem;
-            min-width: 0;
-          }
-          label {
-            padding: 0.2rem 0.5rem;
-            background-color: var(--color-text);
-            color: white;
-          }
-          #diaryFile {
-            display: none;
-          }
+          padding-left: 0.5rem;
+          min-width: 0;
         }
-        #imgViewer {
-          height: 200px;
-          border: 1px solid var(--color-text);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          img {
-            width: calc(100% - 0.5rem);
-            height: calc(100% - 0.5rem);
-            object-fit: contain;
-          }
+        label {
+          padding: 0.2rem 0.5rem;
+          background-color: var(--color-text);
+          color: white;
         }
-        hr {
-          margin: 0.5rem 0;
+        #diaryFile {
+          display: none;
+        }
+        button{
+          background: transparent;
+          padding: 0.2rem 0.5rem;
+          background-color: var(--color-text);
+          color: white;
           border: 0;
-          border-top: 1px solid var(--color-text);
+          margin-left: 0.5rem;
         }
-        #diaryContent {
-          width: 100%;
-          height: 100px;
-          resize: none;
-          outline: 0;
-          border: 0;
-          padding: 0.5rem;
-          font-size: 0.9rem;
-          color: inherit;
-          font-family: inherit;
+      }
+      #imgViewer {
+        height: 200px;
+        border: 1px solid var(--color-text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5rem;
+        img {
+          width: calc(100% - 0.5rem);
+          height: calc(100% - 0.5rem);
+          object-fit: contain;
         }
+      }
+      hr {
+        margin: 0.5rem 0;
+        border: 0;
+        border-top: 1px solid var(--color-text);
+      }
+      #diaryContent {
+        width: 100%;
+        height: 100px;
+        resize: none;
+        outline: 0;
+        border: 0;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        color: inherit;
+        font-family: inherit;
       }
     }
     .datepicker{
@@ -375,6 +461,30 @@ export default {
       .dp__input{
         font-family: 'GowunDodum-Regular';
         border: 0;
+      }
+    }
+    .schedulePopup{
+      .datepicker{
+        padding: 0;
+      }
+      .checkboxPlace{
+        padding-left: 12px;
+        label{
+          img{
+            height: 1.5rem;
+            width: 1rem;
+            object-fit: contain;
+            vertical-align: top;
+          }
+          input{
+            display: none;
+          }
+          span{
+            line-height: 1.5rem;
+            vertical-align: top;
+            padding-left: 0.5rem;
+          }
+        }
       }
     }
     .editTopic{

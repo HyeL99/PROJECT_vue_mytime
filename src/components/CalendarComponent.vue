@@ -53,7 +53,6 @@ export default {
   },
   methods:{
     $getCalendar(){
-      console.log('getCalendar called');
       const viewYear = this.yearOp;
       const viewMonth = this.monthOp;
 
@@ -119,7 +118,6 @@ export default {
       this.nextDates = nextList;
     },
     $viewDay(date){
-      console.log('$viewDay called')
       this.$router.push({name: 'day', params: {dayId: date}})
     },
     $today(){
@@ -127,18 +125,15 @@ export default {
     }
   },
   created(){
-    console.log('created called');
     this.yearOp = new Date().getFullYear();
     this.monthOp = new Date().getMonth() + 1;
     this.$getCalendar()
   },
   watch: {
     yearOp(){
-      console.log('yearOp watch');
       this.$getCalendar();
     },
     monthOp(){
-      console.log('yearOp watch');
       this.$getCalendar();
     }
   }
